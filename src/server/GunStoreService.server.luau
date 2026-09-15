@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local WeaponConfig = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("WeaponConfig"))
+local CityLayoutService = require(script.Parent:WaitForChild("CityLayoutService"))
 
 local remotes = ReplicatedStorage:FindFirstChild("StreetGamesRemotes")
 if not remotes then
@@ -54,24 +55,25 @@ local function waitForSpawnNodes(timeout: number): {BasePart}
 	return {}
 end
 
-local function getCenterNode(nodes: {BasePart}): BasePart?
+local function getCityCenterNode(nodes: {BasePart}): BasePart?
 	if #nodes == 0 then
 		return nil
 	end
 
-	local average = Vector3.zero
-	for _, node in nodes do
-		average += node.Position
-	end
-	average /= #nodes
+	local layout = CityLayoutService.GetLayout()
+	local coreNodes = CityLayoutService.FilterCoreNodes(nodes)
+	local candidates = #coreNodes > 0 and coreNodes or nodes
+	local target = Vector3.new(layout.CoreCenterX, 0, layout.CoreCenterZ)
 
-	local closest = nodes[1]
-	local closestDistance = (closest.Position - average).Magnitude
+	local closest = candidates[1]
+	local closestDistance = math.huge
 
-	for i = 2, #nodes do
-		local distance = (nodes[i].Position - average).Magnitude
+	for _, node in candidates do
+		local flatNode = Vector3.new(node.Position.X, 0, node.Position.Z)
+		local distance = (flatNode - target).Magnitude
+
 		if distance < closestDistance then
-			closest = nodes[i]
+			closest = node
 			closestDistance = distance
 		end
 	end
@@ -136,11 +138,13 @@ local function createStore()
 		return
 	end
 
+	local layout = CityLayoutService.GetLayout()
 	local nodes = waitForSpawnNodes(15)
-	local centerNode = getCenterNode(nodes)
+	local centerNode = getCityCenterNode(nodes)
 
-	local suggested = centerNode and centerNode.Position or Vector3.new(0, 0, 0)
-	suggested += Vector3.new(20, 0, 0)
+	local suggested = centerNode and centerNode.Position
+		or Vector3.new(layout.CoreCenterX, 0, layout.CoreCenterZ)
+	suggested += Vector3.new(14, 0, 0)
 
 	local ground = groundPosition(suggested)
 	local base = ground + Vector3.new(0, 0.5, 0)
@@ -219,7 +223,7 @@ local function createStore()
 		openStoreRemote:FireClient(player)
 	end)
 
-	print("[Street Games] Gun store created near Downtown.")
+	print("[Street Games] Gun store created inside the detected city core.")
 end
 
 local function isNearStore(player: Player): boolean
