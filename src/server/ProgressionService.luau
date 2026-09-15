@@ -52,6 +52,13 @@ local function getOrCreateLeaderstats(player: Player)
 		rankValue.Parent = leaderstats
 	end
 
+	local levelValue = leaderstats:FindFirstChild("Level")
+	if not levelValue then
+		levelValue = Instance.new("IntValue")
+		levelValue.Name = "Level"
+		levelValue.Parent = leaderstats
+	end
+
 	local xpValue = leaderstats:FindFirstChild("XP")
 	if not xpValue then
 		xpValue = Instance.new("IntValue")
@@ -59,7 +66,7 @@ local function getOrCreateLeaderstats(player: Player)
 		xpValue.Parent = leaderstats
 	end
 
-	return rankValue, xpValue
+	return rankValue, levelValue, xpValue
 end
 
 local function applyProgress(player: Player, xp: number, notifyRankUp: boolean?)
@@ -71,13 +78,15 @@ local function applyProgress(player: Player, xp: number, notifyRankUp: boolean?)
 	player:SetAttribute("XP", xp)
 	player:SetAttribute("Rank", progress.Rank.Name)
 	player:SetAttribute("RankIndex", progress.RankIndex)
+	player:SetAttribute("Level", progress.RankIndex)
 	player:SetAttribute("RankProgress", progress.Progress)
 	player:SetAttribute("XPIntoRank", progress.XPIntoRank)
 	player:SetAttribute("XPNeededForRank", progress.XPNeededForRank)
 	player:SetAttribute("NextRank", progress.NextRank and progress.NextRank.Name or "MAX")
 
-	local rankValue, xpValue = getOrCreateLeaderstats(player)
+	local rankValue, levelValue, xpValue = getOrCreateLeaderstats(player)
 	rankValue.Value = progress.Rank.Name
+	levelValue.Value = progress.RankIndex
 	xpValue.Value = xp
 
 	if notifyRankUp and oldRankIndex > 0 and progress.RankIndex > oldRankIndex then
