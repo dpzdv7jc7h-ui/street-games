@@ -7,8 +7,8 @@ local ProgressionService = require(script.Parent:WaitForChild("ProgressionServic
 CashService.Init()
 ProgressionService.Init()
 
-local TARGET_CARS = 16
-local MIN_CAR_SPACING = 105
+local TARGET_CARS = 20
+local MIN_CAR_SPACING = 75
 local ROBBERY_HOLD_TIME = 2.2
 local MIN_CASH = 300
 local MAX_CASH = 1150
@@ -211,7 +211,7 @@ local function setRobbedAppearance(model: Model, robbed: boolean)
 
 	local status = model:FindFirstChild("RobberyStatus", true)
 	if status and status:IsA("TextLabel") then
-		status.Text = robbed and "EMPTY" or "CASH INSIDE"
+		status.Text = robbed and "EMPTY" or "ROB THIS CAR"
 		status.TextColor3 = robbed and Color3.fromRGB(255, 105, 105) or Color3.fromRGB(115, 255, 160)
 	end
 end
@@ -220,6 +220,8 @@ local function createCar(position: Vector3, yaw: number, index: number): Model
 	local model = Instance.new("Model")
 	model.Name = string.format("ParkedCar_%02d", index)
 	model:SetAttribute("Robbed", false)
+	model:SetAttribute("RobberyOnly", true)
+	model:SetAttribute("Drivable", false)
 	model.Parent = carsFolder
 
 	local bodyColor = CAR_COLORS[((index - 1) % #CAR_COLORS) + 1]
@@ -333,7 +335,7 @@ local function createCar(position: Vector3, yaw: number, index: number): Model
 	local prompt = Instance.new("ProximityPrompt")
 	prompt.Name = "RobCarPrompt"
 	prompt.ActionText = "Rob Car"
-	prompt.ObjectText = "Parked Vehicle"
+	prompt.ObjectText = "Robbery Car • Not Drivable"
 	prompt.KeyboardKeyCode = Enum.KeyCode.E
 	prompt.HoldDuration = ROBBERY_HOLD_TIME
 	prompt.MaxActivationDistance = 10
@@ -345,7 +347,7 @@ local function createCar(position: Vector3, yaw: number, index: number): Model
 	billboard.Size = UDim2.fromOffset(130, 28)
 	billboard.StudsOffset = Vector3.new(0, 3.7, 0)
 	billboard.AlwaysOnTop = true
-	billboard.MaxDistance = 36
+	billboard.MaxDistance = 75
 	billboard.Parent = cabin
 
 	local status = Instance.new("TextLabel")
@@ -355,7 +357,7 @@ local function createCar(position: Vector3, yaw: number, index: number): Model
 	status.BackgroundTransparency = 0.18
 	status.BorderSizePixel = 0
 	status.Font = Enum.Font.GothamBold
-	status.Text = "CASH INSIDE"
+	status.Text = "ROB THIS CAR"
 	status.TextColor3 = Color3.fromRGB(115, 255, 160)
 	status.TextSize = 10
 	status.Parent = billboard
@@ -413,6 +415,24 @@ local function createCar(position: Vector3, yaw: number, index: number): Model
 	return model
 end
 
+local function getGroundAt(position: Vector3): Vector3
+	local params = RaycastParams.new()
+	params.FilterType = Enum.RaycastFilterType.Exclude
+	params.FilterDescendantsInstances = {carsFolder, workspace:FindFirstChild("StreetGamesRespawns")}
+
+	local result = workspace:Raycast(
+		position + Vector3.new(0, 80, 0),
+		Vector3.new(0, -180, 0),
+		params
+	)
+
+	if result then
+		return result.Position
+	end
+
+	return position
+end
+
 local function spawnCars()
 	local nodes = waitForSpawnNodes(15)
 	if #nodes == 0 then
@@ -422,43 +442,68 @@ local function spawnCars()
 
 	local selectedPositions = {}
 	local created = 0
-	local step = math.max(1, math.floor(#nodes / TARGET_CARS))
 
-	for index = 1, #nodes, step do
+	-- Spread robbery-only cars across the same city grid that already powers respawning.
+	-- This avoids depending on whatever names the Modern City template uses for its roads.
+	local stride = math.max(1, math.floor(#nodes / TARGET_CARS))
+
+	for nodeIndex = 1, #nodes, stride do
 		if created >= TARGET_CARS then
 			break
 		end
 
-		local node = nodes[index]
-		local surfacePosition, surface = findRoadSurfaceNear(node.Position)
+		local node = nodes[nodeIndex]
 
-		if surfacePosition then
-			local tooClose = false
+		-- Offset a little from the exact respawn point so a car is not sitting directly on it.
+		local lateral = ((created % 2 == 0) and 1 or -1) * (9 + (created % 3) * 3)
+		local forward = ((created % 4) - 1.5) * 4
+		local candidate = node.Position + Vector3.new(lateral, 0, forward)
+		local ground = getGroundAt(candidate)
+
+		local tooClose = false
+		for _, existingPosition in selectedPositions do
+			if (existingPosition - ground).Magnitude < MIN_CAR_SPACING then
+				tooClose = true
+				break
+			end
+		end
+
+		if not tooClose then
+			created += 1
+			table.insert(selectedPositions, ground)
+
+			-- Alternate orientation to make them look naturally parked around the city.
+			local yaw = ((created + nodeIndex) % 2 == 0) and 0 or math.rad(90)
+			createCar(ground, yaw, created)
+		end
+	end
+
+	-- Fallback: if spacing rules leave too few, place extra cars directly at unused nodes.
+	if created < math.min(8, TARGET_CARS) then
+		for _, node in nodes do
+			if created >= math.min(TARGET_CARS, #nodes) then
+				break
+			end
+
+			local ground = getGroundAt(node.Position + Vector3.new(7, 0, 0))
+			local alreadyUsed = false
+
 			for _, existingPosition in selectedPositions do
-				if (existingPosition - surfacePosition).Magnitude < MIN_CAR_SPACING then
-					tooClose = true
+				if (existingPosition - ground).Magnitude < 30 then
+					alreadyUsed = true
 					break
 				end
 			end
 
-			local storeX = workspace:GetAttribute("StreetGamesGunStoreX")
-			local storeZ = workspace:GetAttribute("StreetGamesGunStoreZ")
-			if type(storeX) == "number" and type(storeZ) == "number" then
-				local storePos = Vector3.new(storeX, surfacePosition.Y, storeZ)
-				if (storePos - surfacePosition).Magnitude < 55 then
-					tooClose = true
-				end
-			end
-
-			if not tooClose then
+			if not alreadyUsed then
 				created += 1
-				table.insert(selectedPositions, surfacePosition)
-				createCar(surfacePosition, roadYaw(surface, created), created)
+				table.insert(selectedPositions, ground)
+				createCar(ground, (created % 2 == 0) and 0 or math.rad(90), created)
 			end
 		end
 	end
 
-	print(string.format("[Street Games] Spawned %d robbery cars around the city.", created))
+	print(string.format("[Street Games] Spawned %d ROBBERY-ONLY parked cars around the city.", created))
 end
 
 task.spawn(function()
