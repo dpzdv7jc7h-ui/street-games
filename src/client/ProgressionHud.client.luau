@@ -1,10 +1,16 @@
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
+
+local existingGui = playerGui:FindFirstChild("StreetGamesProgressionHUD")
+if existingGui then
+	existingGui:Destroy()
+end
+
+print("[Street Games] Progression HUD v3 loaded")
 
 local COLORS = {
 	Card = Color3.fromRGB(13, 15, 19),
@@ -42,11 +48,6 @@ gui.IgnoreGuiInset = false
 gui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 gui.DisplayOrder = 15
 gui.Parent = playerGui
-
--- Responsive scale for smaller screens.
-local uiScale = Instance.new("UIScale")
-uiScale.Scale = UserInputService.TouchEnabled and 0.86 or 1
-uiScale.Parent = gui
 
 -- Soft shadow behind the main card.
 local shadow = Instance.new("Frame")
@@ -179,7 +180,6 @@ rankLabel.Text = "FREE AGENT"
 rankLabel.TextColor3 = COLORS.Text
 rankLabel.TextSize = 20
 rankLabel.TextXAlignment = Enum.TextXAlignment.Left
-rankLabel.TextTruncate = Enum.TextTruncate.AtEnd
 rankLabel.ZIndex = 4
 rankLabel.Parent = card
 
