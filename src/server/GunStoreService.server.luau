@@ -129,6 +129,9 @@ local function createStore()
 		local interaction = storeModel:FindFirstChild("Interaction", true)
 		if interaction and interaction:IsA("BasePart") then
 			storePosition = interaction.Position
+			workspace:SetAttribute("StreetGamesGunStoreX", storePosition.X)
+			workspace:SetAttribute("StreetGamesGunStoreY", storePosition.Y)
+			workspace:SetAttribute("StreetGamesGunStoreZ", storePosition.Z)
 		end
 		return
 	end
@@ -142,6 +145,9 @@ local function createStore()
 	local ground = groundPosition(suggested)
 	local base = ground + Vector3.new(0, 0.5, 0)
 	storePosition = base
+	workspace:SetAttribute("StreetGamesGunStoreX", storePosition.X)
+	workspace:SetAttribute("StreetGamesGunStoreY", storePosition.Y)
+	workspace:SetAttribute("StreetGamesGunStoreZ", storePosition.Z)
 
 	local model = Instance.new("Model")
 	model.Name = "StreetGamesGunStore"
