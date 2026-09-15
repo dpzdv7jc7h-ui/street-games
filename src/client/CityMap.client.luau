@@ -7,6 +7,8 @@ local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local DistrictConfig = require(ReplicatedStorage:WaitForChild("Shared"):WaitForChild("DistrictConfig"))
 
+print("[Street Games] City map v2 loaded")
+
 local existing = playerGui:FindFirstChild("StreetGamesCityMap")
 if existing then
 	existing:Destroy()
@@ -18,22 +20,133 @@ gui.ResetOnSpawn = false
 gui.DisplayOrder = 22
 gui.Parent = playerGui
 
-local mapButton = Instance.new("TextButton")
-mapButton.AnchorPoint = Vector2.new(1, 0)
-mapButton.Position = UDim2.new(1, -24, 0, 24)
-mapButton.Size = UDim2.fromOffset(112, 38)
-mapButton.BackgroundColor3 = Color3.fromRGB(17, 19, 23)
-mapButton.BackgroundTransparency = 0.05
-mapButton.BorderSizePixel = 0
-mapButton.Font = Enum.Font.GothamBold
-mapButton.Text = "M  CITY MAP"
-mapButton.TextColor3 = Color3.fromRGB(238, 238, 242)
-mapButton.TextSize = 11
-mapButton.Parent = gui
+local miniMap = Instance.new("TextButton")
+miniMap.Name = "MiniMap"
+miniMap.AnchorPoint = Vector2.new(1, 0)
+miniMap.Position = UDim2.new(1, -24, 0, 24)
+miniMap.Size = UDim2.fromOffset(220, 170)
+miniMap.BackgroundColor3 = Color3.fromRGB(11, 13, 16)
+miniMap.BackgroundTransparency = 0.04
+miniMap.BorderSizePixel = 0
+miniMap.Text = ""
+miniMap.AutoButtonColor = false
+miniMap.Parent = gui
 
-local buttonCorner = Instance.new("UICorner")
-buttonCorner.CornerRadius = UDim.new(0, 11)
-buttonCorner.Parent = mapButton
+local miniCorner = Instance.new("UICorner")
+miniCorner.CornerRadius = UDim.new(0, 16)
+miniCorner.Parent = miniMap
+
+local miniStroke = Instance.new("UIStroke")
+miniStroke.Color = Color3.fromRGB(255, 205, 82)
+miniStroke.Transparency = 0.55
+miniStroke.Thickness = 1.2
+miniStroke.Parent = miniMap
+
+local miniTitle = Instance.new("TextLabel")
+miniTitle.Position = UDim2.fromOffset(12, 8)
+miniTitle.Size = UDim2.new(1, -24, 0, 20)
+miniTitle.BackgroundTransparency = 1
+miniTitle.Font = Enum.Font.GothamBlack
+miniTitle.Text = "CITY MAP"
+miniTitle.TextColor3 = Color3.fromRGB(245, 245, 248)
+miniTitle.TextSize = 13
+miniTitle.TextXAlignment = Enum.TextXAlignment.Left
+miniTitle.Parent = miniMap
+
+local miniHint = Instance.new("TextLabel")
+miniHint.AnchorPoint = Vector2.new(1, 0)
+miniHint.Position = UDim2.new(1, -10, 0, 9)
+miniHint.Size = UDim2.fromOffset(90, 18)
+miniHint.BackgroundTransparency = 1
+miniHint.Font = Enum.Font.GothamBold
+miniHint.Text = "M  EXPAND"
+miniHint.TextColor3 = Color3.fromRGB(255, 205, 82)
+miniHint.TextSize = 9
+miniHint.TextXAlignment = Enum.TextXAlignment.Right
+miniHint.Parent = miniMap
+
+local miniArea = Instance.new("Frame")
+miniArea.Position = UDim2.fromOffset(10, 34)
+miniArea.Size = UDim2.new(1, -20, 1, -44)
+miniArea.BackgroundColor3 = Color3.fromRGB(21, 24, 29)
+miniArea.BorderSizePixel = 0
+miniArea.Parent = miniMap
+
+local miniAreaCorner = Instance.new("UICorner")
+miniAreaCorner.CornerRadius = UDim.new(0, 11)
+miniAreaCorner.Parent = miniArea
+
+local miniDistrictFrames = {}
+
+local function makeMiniDistrict(name, position, size)
+	local data = DistrictConfig.Districts[name]
+
+	local frame = Instance.new("Frame")
+	frame.Name = "Mini_" .. name
+	frame.Position = position
+	frame.Size = size
+	frame.BackgroundColor3 = data.Color
+	frame.BackgroundTransparency = 0.62
+	frame.BorderSizePixel = 0
+	frame.Parent = miniArea
+
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, 6)
+	corner.Parent = frame
+
+	local stroke = Instance.new("UIStroke")
+	stroke.Color = data.Color
+	stroke.Transparency = 0.55
+	stroke.Thickness = 1
+	stroke.Parent = frame
+
+	local label = Instance.new("TextLabel")
+	label.Size = UDim2.fromScale(1, 1)
+	label.BackgroundTransparency = 1
+	label.Font = Enum.Font.GothamBold
+	label.Text = string.upper(data.DisplayName)
+	label.TextColor3 = Color3.fromRGB(240, 240, 244)
+	label.TextScaled = true
+	label.Parent = frame
+
+	local padding = Instance.new("UIPadding")
+	padding.PaddingLeft = UDim.new(0, 4)
+	padding.PaddingRight = UDim.new(0, 4)
+	padding.PaddingTop = UDim.new(0, 4)
+	padding.PaddingBottom = UDim.new(0, 4)
+	padding.Parent = label
+
+	miniDistrictFrames[name] = {
+		Frame = frame,
+		Stroke = stroke,
+	}
+end
+
+makeMiniDistrict("Northside", UDim2.new(0.25, 0, 0.03, 0), UDim2.new(0.50, 0, 0.24, 0))
+makeMiniDistrict("WestEnd", UDim2.new(0.03, 0, 0.31, 0), UDim2.new(0.29, 0, 0.37, 0))
+makeMiniDistrict("Downtown", UDim2.new(0.35, 0, 0.31, 0), UDim2.new(0.30, 0, 0.37, 0))
+makeMiniDistrict("EastSide", UDim2.new(0.68, 0, 0.31, 0), UDim2.new(0.29, 0, 0.37, 0))
+makeMiniDistrict("SouthBlock", UDim2.new(0.25, 0, 0.72, 0), UDim2.new(0.50, 0, 0.24, 0))
+
+local playerDot = Instance.new("Frame")
+playerDot.Name = "PlayerDot"
+playerDot.AnchorPoint = Vector2.new(0.5, 0.5)
+playerDot.Position = UDim2.fromScale(0.5, 0.5)
+playerDot.Size = UDim2.fromOffset(10, 10)
+playerDot.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+playerDot.BorderSizePixel = 0
+playerDot.ZIndex = 10
+playerDot.Parent = miniArea
+
+local dotCorner = Instance.new("UICorner")
+dotCorner.CornerRadius = UDim.new(1, 0)
+dotCorner.Parent = playerDot
+
+local dotStroke = Instance.new("UIStroke")
+dotStroke.Color = Color3.fromRGB(0, 0, 0)
+dotStroke.Transparency = 0.2
+dotStroke.Thickness = 2
+dotStroke.Parent = playerDot
 
 local panel = Instance.new("Frame")
 panel.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -215,6 +328,13 @@ local function updateHighlight()
 		data.Stroke.Transparency = selected and 0.05 or 0.45
 		data.Stroke.Thickness = selected and 2.4 or 1.2
 	end
+
+	for name, data in miniDistrictFrames do
+		local selected = name == current
+		data.Frame.BackgroundTransparency = selected and 0.22 or 0.62
+		data.Stroke.Transparency = selected and 0.02 or 0.55
+		data.Stroke.Thickness = selected and 2 or 1
+	end
 end
 
 local function showEntry(districtName)
@@ -270,7 +390,7 @@ local function setMapOpen(open)
 	end
 end
 
-mapButton.Activated:Connect(function()
+miniMap.Activated:Connect(function()
 	setMapOpen(not panel.Visible)
 end)
 
@@ -295,6 +415,33 @@ player:GetAttributeChangedSignal("District"):Connect(function()
 	if district then
 		updateHighlight()
 		showEntry(district)
+	end
+end)
+
+task.spawn(function()
+	while gui.Parent do
+		local character = player.Character
+		local root = character and character:FindFirstChild("HumanoidRootPart")
+
+		local centerX = workspace:GetAttribute("StreetGamesMapCenterX")
+		local centerZ = workspace:GetAttribute("StreetGamesMapCenterZ")
+		local halfX = workspace:GetAttribute("StreetGamesMapHalfX")
+		local halfZ = workspace:GetAttribute("StreetGamesMapHalfZ")
+
+		if root and root:IsA("BasePart")
+			and type(centerX) == "number"
+			and type(centerZ) == "number"
+			and type(halfX) == "number"
+			and type(halfZ) == "number"
+			and halfX > 0
+			and halfZ > 0 then
+
+			local x = math.clamp((root.Position.X - centerX) / (halfX * 2) + 0.5, 0.03, 0.97)
+			local y = math.clamp((root.Position.Z - centerZ) / (halfZ * 2) + 0.5, 0.03, 0.97)
+			playerDot.Position = UDim2.fromScale(x, y)
+		end
+
+		task.wait(0.1)
 	end
 end)
 
