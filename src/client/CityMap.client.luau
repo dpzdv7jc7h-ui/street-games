@@ -80,9 +80,9 @@ end
 -- Always-visible local minimap.
 local miniShell = Instance.new("Frame")
 miniShell.Name = "MiniMapShell"
-miniShell.AnchorPoint = Vector2.new(1, 0)
-miniShell.Position = UDim2.new(1, -24, 0, 24)
-miniShell.Size = UDim2.fromOffset(260, 220)
+miniShell.AnchorPoint = Vector2.new(0, 1)
+miniShell.Position = UDim2.new(0, 20, 1, -20)
+miniShell.Size = UDim2.fromOffset(230, 195)
 miniShell.BackgroundColor3 = COLORS.Panel
 miniShell.BackgroundTransparency = 0.03
 miniShell.BorderSizePixel = 0
@@ -91,32 +91,32 @@ addCorner(miniShell, 17)
 addStroke(miniShell, COLORS.Gold, 0.45, 1.2)
 
 local miniTitle = Instance.new("TextLabel")
-miniTitle.Position = UDim2.fromOffset(14, 8)
-miniTitle.Size = UDim2.new(1, -28, 0, 20)
+miniTitle.Position = UDim2.fromOffset(12, 7)
+miniTitle.Size = UDim2.new(1, -24, 0, 18)
 miniTitle.BackgroundTransparency = 1
 miniTitle.Font = Enum.Font.GothamBlack
 miniTitle.Text = "STREET GAMES • MAP"
 miniTitle.TextColor3 = COLORS.Text
-miniTitle.TextSize = 12
+miniTitle.TextSize = 11
 miniTitle.TextXAlignment = Enum.TextXAlignment.Left
 miniTitle.Parent = miniShell
 
 local miniDistrict = Instance.new("TextLabel")
 miniDistrict.AnchorPoint = Vector2.new(1, 0)
-miniDistrict.Position = UDim2.new(1, -13, 0, 9)
-miniDistrict.Size = UDim2.fromOffset(110, 18)
+miniDistrict.Position = UDim2.new(1, -11, 0, 8)
+miniDistrict.Size = UDim2.fromOffset(98, 16)
 miniDistrict.BackgroundTransparency = 1
 miniDistrict.Font = Enum.Font.GothamBold
 miniDistrict.Text = "DOWNTOWN"
 miniDistrict.TextColor3 = COLORS.Gold
-miniDistrict.TextSize = 9
+miniDistrict.TextSize = 8
 miniDistrict.TextXAlignment = Enum.TextXAlignment.Right
 miniDistrict.Parent = miniShell
 
 local miniHolder = Instance.new("TextButton")
 miniHolder.Name = "MiniViewportButton"
-miniHolder.Position = UDim2.fromOffset(10, 34)
-miniHolder.Size = UDim2.new(1, -20, 1, -44)
+miniHolder.Position = UDim2.fromOffset(9, 31)
+miniHolder.Size = UDim2.new(1, -18, 1, -40)
 miniHolder.BackgroundColor3 = COLORS.Panel2
 miniHolder.BorderSizePixel = 0
 miniHolder.Text = ""
@@ -143,30 +143,30 @@ northMini.Parent = miniHolder
 local playerArrowMini = Instance.new("TextLabel")
 playerArrowMini.AnchorPoint = Vector2.new(0.5, 0.5)
 playerArrowMini.Position = UDim2.fromScale(0.5, 0.5)
-playerArrowMini.Size = UDim2.fromOffset(28, 28)
+playerArrowMini.Size = UDim2.fromOffset(24, 24)
 playerArrowMini.BackgroundColor3 = Color3.fromRGB(12, 14, 17)
 playerArrowMini.BackgroundTransparency = 0.18
 playerArrowMini.BorderSizePixel = 0
 playerArrowMini.Font = Enum.Font.GothamBlack
 playerArrowMini.Text = "▲"
 playerArrowMini.TextColor3 = COLORS.Gold
-playerArrowMini.TextSize = 19
+playerArrowMini.TextSize = 16
 playerArrowMini.ZIndex = 8
 playerArrowMini.Parent = miniHolder
-addCorner(playerArrowMini, 14)
+addCorner(playerArrowMini, 12)
 addStroke(playerArrowMini, COLORS.White, 0.35, 1.5)
 
 local expandHint = Instance.new("TextLabel")
 expandHint.AnchorPoint = Vector2.new(1, 1)
 expandHint.Position = UDim2.new(1, -8, 1, -7)
-expandHint.Size = UDim2.fromOffset(100, 18)
+expandHint.Size = UDim2.fromOffset(88, 16)
 expandHint.BackgroundColor3 = Color3.fromRGB(10, 12, 15)
 expandHint.BackgroundTransparency = 0.18
 expandHint.BorderSizePixel = 0
 expandHint.Font = Enum.Font.GothamBold
 expandHint.Text = "M • EXPAND"
 expandHint.TextColor3 = COLORS.Text
-expandHint.TextSize = 8
+expandHint.TextSize = 7
 expandHint.ZIndex = 7
 expandHint.Parent = miniHolder
 addCorner(expandHint, 6)
@@ -311,18 +311,18 @@ addStroke(armoryMarker, COLORS.Gold, 0.35, 1)
 
 local miniArmoryMarker = Instance.new("TextLabel")
 miniArmoryMarker.AnchorPoint = Vector2.new(0.5, 0.5)
-miniArmoryMarker.Size = UDim2.fromOffset(24, 24)
+miniArmoryMarker.Size = UDim2.fromOffset(21, 21)
 miniArmoryMarker.BackgroundColor3 = Color3.fromRGB(38, 31, 17)
 miniArmoryMarker.BackgroundTransparency = 0.05
 miniArmoryMarker.BorderSizePixel = 0
 miniArmoryMarker.Font = Enum.Font.GothamBlack
 miniArmoryMarker.Text = "★"
 miniArmoryMarker.TextColor3 = COLORS.Gold
-miniArmoryMarker.TextSize = 12
+miniArmoryMarker.TextSize = 10
 miniArmoryMarker.Visible = false
 miniArmoryMarker.ZIndex = 7
 miniArmoryMarker.Parent = miniHolder
-addCorner(miniArmoryMarker, 12)
+addCorner(miniArmoryMarker, 10)
 
 -- District labels on the full map.
 local districtLabels = {}
