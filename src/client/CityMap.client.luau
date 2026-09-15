@@ -25,7 +25,7 @@ local COLORS = {
 	Road = Color3.fromRGB(50, 52, 56),
 }
 
-local MAX_MAP_PARTS = 2200
+local MAX_MAP_PARTS = 3600
 local MINI_ZOOM_STUDS = 430
 local FULL_MAP_FOV = 35
 local MINI_MAP_FOV = 34
@@ -549,9 +549,17 @@ end
 local function fullMapAltitude(): number
 	local halfX = workspace:GetAttribute("StreetGamesMapHalfX") or 600
 	local halfZ = workspace:GetAttribute("StreetGamesMapHalfZ") or 600
-	local maxSpan = math.max(halfX * 2, halfZ * 2)
-	local fovRadians = math.rad(FULL_MAP_FOV)
-	return (maxSpan * 0.66) / math.tan(fovRadians * 0.5)
+
+	local viewportSize = fullHolder.AbsoluteSize
+	local aspect = viewportSize.Y > 0 and (viewportSize.X / viewportSize.Y) or 1.55
+
+	local verticalHalfFov = math.rad(FULL_MAP_FOV * 0.5)
+	local horizontalHalfFov = math.atan(math.tan(verticalHalfFov) * aspect)
+
+	local heightForZ = halfZ / math.max(math.tan(verticalHalfFov), 0.01)
+	local heightForX = halfX / math.max(math.tan(horizontalHalfFov), 0.01)
+
+	return math.max(heightForZ, heightForX) * 1.12
 end
 
 local function setTopDownCamera(camera: Camera, x: number, z: number, altitude: number)
@@ -694,8 +702,17 @@ end
 
 -- Build a lightweight visual copy of the actual city for both map cameras.
 task.spawn(function()
-	-- Give server-generated city pieces a moment to appear.
-	task.wait(1.5)
+	-- Wait for the server to publish detected full-city bounds before rendering.
+	local started = os.clock()
+	while os.clock() - started < 8 do
+		if type(workspace:GetAttribute("StreetGamesMapHalfX")) == "number"
+			and type(workspace:GetAttribute("StreetGamesMapHalfZ")) == "number" then
+			break
+		end
+		task.wait(0.15)
+	end
+
+	task.wait(0.5)
 
 	local sourceParts = collectMapParts()
 	populateWorld(sourceParts, miniWorld)
@@ -731,4 +748,4 @@ if type(initialDistrict) == "string" and DistrictConfig.Districts[initialDistric
 	miniDistrict.TextColor3 = DistrictConfig.Districts[initialDistrict].Color
 end
 
-print("[Street Games] Realistic road map UI ready.")
+print("[Street Games] Full-city road map v4 ready.")
