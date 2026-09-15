@@ -151,7 +151,7 @@ badgeCaption.Position = UDim2.new(0.5, 0, 1, -4)
 badgeCaption.Size = UDim2.fromOffset(58, 14)
 badgeCaption.BackgroundTransparency = 1
 badgeCaption.Font = Enum.Font.GothamBold
-badgeCaption.Text = "RANK"
+badgeCaption.Text = "LEVEL"
 badgeCaption.TextColor3 = COLORS.Muted
 badgeCaption.TextSize = 8
 badgeCaption.ZIndex = 5
@@ -472,7 +472,7 @@ task.spawn(function()
 		rankUpSequence += 1
 		local thisSequence = rankUpSequence
 
-		bannerTitle.Text = "RANK " .. tostring(newRankIndex) .. " UNLOCKED"
+		bannerTitle.Text = "LEVEL " .. tostring(newRankIndex) .. " UNLOCKED"
 		bannerSubtitle.Text = "YOU ARE NOW " .. string.upper(newRank)
 
 		notification.Visible = true
