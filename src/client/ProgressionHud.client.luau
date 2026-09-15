@@ -10,7 +10,7 @@ if existingGui then
 	existingGui:Destroy()
 end
 
-print("[Street Games] Progression HUD v3 loaded")
+print("[Street Games] Compact progression HUD v4 loaded")
 
 local COLORS = {
 	Card = Color3.fromRGB(13, 15, 19),
@@ -53,27 +53,27 @@ gui.Parent = playerGui
 local shadow = Instance.new("Frame")
 shadow.Name = "Shadow"
 shadow.AnchorPoint = Vector2.new(0, 0)
-shadow.Position = UDim2.new(0, 22, 0, 24)
-shadow.Size = UDim2.fromOffset(300, 96)
+shadow.Position = UDim2.new(0, 20, 0, 22)
+shadow.Size = UDim2.fromOffset(220, 72)
 shadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 shadow.BackgroundTransparency = 0.45
 shadow.BorderSizePixel = 0
 shadow.ZIndex = 1
 shadow.Parent = gui
-addCorner(shadow, 18)
+addCorner(shadow, 13)
 
 local card = Instance.new("Frame")
 card.Name = "ProgressionCard"
 card.AnchorPoint = Vector2.new(0, 0)
-card.Position = UDim2.new(0, 18, 0, 20)
-card.Size = UDim2.fromOffset(300, 96)
+card.Position = UDim2.new(0, 16, 0, 18)
+card.Size = UDim2.fromOffset(220, 72)
 card.BackgroundColor3 = COLORS.Card
 card.BackgroundTransparency = 0.04
 card.BorderSizePixel = 0
 card.ZIndex = 2
 card.ClipsDescendants = true
 card.Parent = gui
-addCorner(card, 18)
+addCorner(card, 13)
 addStroke(card, COLORS.White, 0.86, 1)
 
 local cardGradient = Instance.new("UIGradient")
@@ -88,7 +88,7 @@ cardGradient.Parent = card
 local accent = Instance.new("Frame")
 accent.Name = "Accent"
 accent.Position = UDim2.fromOffset(0, 0)
-accent.Size = UDim2.fromOffset(4, 96)
+accent.Size = UDim2.fromOffset(3, 72)
 accent.BackgroundColor3 = COLORS.Gold
 accent.BorderSizePixel = 0
 accent.ZIndex = 3
@@ -105,24 +105,24 @@ accentGradient.Parent = accent
 -- Rank medallion.
 local badgeShadow = Instance.new("Frame")
 badgeShadow.Name = "BadgeShadow"
-badgeShadow.Position = UDim2.fromOffset(17, 16)
-badgeShadow.Size = UDim2.fromOffset(52, 52)
+badgeShadow.Position = UDim2.fromOffset(13, 13)
+badgeShadow.Size = UDim2.fromOffset(38, 38)
 badgeShadow.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 badgeShadow.BackgroundTransparency = 0.5
 badgeShadow.BorderSizePixel = 0
 badgeShadow.ZIndex = 3
 badgeShadow.Parent = card
-addCorner(badgeShadow, 26)
+addCorner(badgeShadow, 19)
 
 local badge = Instance.new("Frame")
 badge.Name = "RankBadge"
-badge.Position = UDim2.fromOffset(14, 13)
-badge.Size = UDim2.fromOffset(52, 52)
+badge.Position = UDim2.fromOffset(11, 10)
+badge.Size = UDim2.fromOffset(38, 38)
 badge.BackgroundColor3 = Color3.fromRGB(36, 31, 19)
 badge.BorderSizePixel = 0
 badge.ZIndex = 4
 badge.Parent = card
-addCorner(badge, 26)
+addCorner(badge, 19)
 addStroke(badge, COLORS.Gold, 0.18, 2)
 
 local badgeGradient = Instance.new("UIGradient")
@@ -140,73 +140,73 @@ badgeNumber.BackgroundTransparency = 1
 badgeNumber.Font = Enum.Font.GothamBlack
 badgeNumber.Text = "1"
 badgeNumber.TextColor3 = COLORS.GoldBright
-badgeNumber.TextSize = 22
+badgeNumber.TextSize = 16
 badgeNumber.ZIndex = 5
 badgeNumber.Parent = badge
 
 local badgeCaption = Instance.new("TextLabel")
 badgeCaption.Name = "Caption"
 badgeCaption.AnchorPoint = Vector2.new(0.5, 0)
-badgeCaption.Position = UDim2.new(0.5, 0, 1, -4)
-badgeCaption.Size = UDim2.fromOffset(50, 12)
+badgeCaption.Position = UDim2.new(0.5, 0, 1, -3)
+badgeCaption.Size = UDim2.fromOffset(38, 9)
 badgeCaption.BackgroundTransparency = 1
 badgeCaption.Font = Enum.Font.GothamBold
 badgeCaption.Text = "LEVEL"
 badgeCaption.TextColor3 = COLORS.Muted
-badgeCaption.TextSize = 7
+badgeCaption.TextSize = 6
 badgeCaption.ZIndex = 5
 badgeCaption.Parent = badge
 
 local titleSmall = Instance.new("TextLabel")
 titleSmall.Name = "TitleSmall"
-titleSmall.Position = UDim2.fromOffset(78, 11)
-titleSmall.Size = UDim2.new(1, -94, 0, 13)
+titleSmall.Position = UDim2.fromOffset(58, 8)
+titleSmall.Size = UDim2.new(1, -68, 0, 10)
 titleSmall.BackgroundTransparency = 1
 titleSmall.Font = Enum.Font.GothamBold
 titleSmall.Text = "STREET REP"
 titleSmall.TextColor3 = COLORS.Gold
-titleSmall.TextSize = 9
+titleSmall.TextSize = 7
 titleSmall.TextXAlignment = Enum.TextXAlignment.Left
 titleSmall.ZIndex = 4
 titleSmall.Parent = card
 
 local rankLabel = Instance.new("TextLabel")
 rankLabel.Name = "Rank"
-rankLabel.Position = UDim2.fromOffset(78, 23)
-rankLabel.Size = UDim2.new(1, -94, 0, 24)
+rankLabel.Position = UDim2.fromOffset(58, 18)
+rankLabel.Size = UDim2.new(1, -68, 0, 18)
 rankLabel.BackgroundTransparency = 1
 rankLabel.Font = Enum.Font.GothamBlack
 rankLabel.Text = "FREE AGENT"
 rankLabel.TextColor3 = COLORS.Text
-rankLabel.TextSize = 17
+rankLabel.TextSize = 13
 rankLabel.TextXAlignment = Enum.TextXAlignment.Left
 rankLabel.ZIndex = 4
 rankLabel.Parent = card
 
 local totalXPLabel = Instance.new("TextLabel")
 totalXPLabel.Name = "TotalXP"
-totalXPLabel.Position = UDim2.fromOffset(78, 47)
-totalXPLabel.Size = UDim2.new(1, -94, 0, 14)
+totalXPLabel.Position = UDim2.fromOffset(58, 36)
+totalXPLabel.Size = UDim2.new(1, -68, 0, 10)
 totalXPLabel.BackgroundTransparency = 1
 totalXPLabel.Font = Enum.Font.GothamMedium
 totalXPLabel.Text = "0 TOTAL XP"
 totalXPLabel.TextColor3 = COLORS.Muted
-totalXPLabel.TextSize = 9
+totalXPLabel.TextSize = 7
 totalXPLabel.TextXAlignment = Enum.TextXAlignment.Left
 totalXPLabel.ZIndex = 4
 totalXPLabel.Parent = card
 
 local barBack = Instance.new("Frame")
 barBack.Name = "XPTrack"
-barBack.Position = UDim2.fromOffset(78, 66)
-barBack.Size = UDim2.new(1, -94, 0, 10)
+barBack.Position = UDim2.fromOffset(58, 49)
+barBack.Size = UDim2.new(1, -68, 0, 7)
 barBack.BackgroundColor3 = COLORS.Track
 barBack.BackgroundTransparency = 0.1
 barBack.BorderSizePixel = 0
 barBack.ClipsDescendants = true
 barBack.ZIndex = 4
 barBack.Parent = card
-addCorner(barBack, 6)
+addCorner(barBack, 4)
 
 local barFill = Instance.new("Frame")
 barFill.Name = "Fill"
@@ -215,7 +215,7 @@ barFill.BackgroundColor3 = COLORS.Gold
 barFill.BorderSizePixel = 0
 barFill.ZIndex = 5
 barFill.Parent = barBack
-addCorner(barFill, 6)
+addCorner(barFill, 4)
 
 local barGradient = Instance.new("UIGradient")
 barGradient.Color = ColorSequence.new({
@@ -233,17 +233,17 @@ barShine.BackgroundTransparency = 0.78
 barShine.BorderSizePixel = 0
 barShine.ZIndex = 6
 barShine.Parent = barFill
-addCorner(barShine, 6)
+addCorner(barShine, 4)
 
 local progressLabel = Instance.new("TextLabel")
 progressLabel.Name = "Progress"
-progressLabel.Position = UDim2.fromOffset(78, 78)
-progressLabel.Size = UDim2.new(0.5, -6, 0, 12)
+progressLabel.Position = UDim2.fromOffset(58, 58)
+progressLabel.Size = UDim2.new(0.5, -4, 0, 9)
 progressLabel.BackgroundTransparency = 1
 progressLabel.Font = Enum.Font.GothamMedium
 progressLabel.Text = "0 / 100 XP"
 progressLabel.TextColor3 = COLORS.Muted
-progressLabel.TextSize = 8
+progressLabel.TextSize = 6
 progressLabel.TextXAlignment = Enum.TextXAlignment.Left
 progressLabel.ZIndex = 4
 progressLabel.Parent = card
@@ -251,13 +251,13 @@ progressLabel.Parent = card
 local nextLabel = Instance.new("TextLabel")
 nextLabel.Name = "NextRank"
 nextLabel.AnchorPoint = Vector2.new(1, 0)
-nextLabel.Position = UDim2.new(1, -14, 0, 78)
-nextLabel.Size = UDim2.new(0.5, -6, 0, 12)
+nextLabel.Position = UDim2.new(1, -10, 0, 58)
+nextLabel.Size = UDim2.new(0.5, -4, 0, 9)
 nextLabel.BackgroundTransparency = 1
 nextLabel.Font = Enum.Font.GothamBold
 nextLabel.Text = "NEXT: ROOKIE"
 nextLabel.TextColor3 = COLORS.Gold
-nextLabel.TextSize = 8
+nextLabel.TextSize = 6
 nextLabel.TextXAlignment = Enum.TextXAlignment.Right
 nextLabel.ZIndex = 4
 nextLabel.Parent = card
@@ -374,14 +374,14 @@ local function showXPGain(amount: number)
 	local popup = Instance.new("TextLabel")
 	popup.Name = "XPGain"
 	popup.AnchorPoint = Vector2.new(0, 0)
-	popup.Position = UDim2.new(0, 80, 0, 112)
-	popup.Size = UDim2.fromOffset(165, 22)
+	popup.Position = UDim2.new(0, 58, 0, 88)
+	popup.Size = UDim2.fromOffset(130, 18)
 	popup.BackgroundTransparency = 1
 	popup.Font = Enum.Font.GothamBold
 	popup.Text = "+" .. formatNumber(amount) .. " XP"
 	popup.TextColor3 = COLORS.Green
 	popup.TextTransparency = 0
-	popup.TextSize = 13
+	popup.TextSize = 10
 	popup.TextXAlignment = Enum.TextXAlignment.Left
 	popup.ZIndex = 30
 	popup.Parent = gui
@@ -390,7 +390,7 @@ local function showXPGain(amount: number)
 		popup,
 		TweenInfo.new(0.85, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
 		{
-			Position = UDim2.new(0, 80, 0, 92),
+			Position = UDim2.new(0, 58, 0, 74),
 			TextTransparency = 1,
 		}
 	):Play()
