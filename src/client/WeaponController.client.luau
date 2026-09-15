@@ -243,11 +243,7 @@ UserInputService.InputBegan:Connect(function(input, processed)
 	end
 end)
 
-local unlockSequence = 0
-
 unlockRemote.OnClientEvent:Connect(function(displayName: string, level: number)
-	unlockSequence += 1
-	local sequence = unlockSequence
 
 	local toast = Instance.new("Frame")
 	toast.Name = "WeaponUnlock"
@@ -297,10 +293,6 @@ unlockRemote.OnClientEvent:Connect(function(displayName: string, level: number)
 	):Play()
 
 	task.delay(2.7, function()
-		if sequence ~= unlockSequence then
-			return
-		end
-
 		local tween = TweenService:Create(
 			toast,
 			TweenInfo.new(0.25, Enum.EasingStyle.Quart, Enum.EasingDirection.In),
