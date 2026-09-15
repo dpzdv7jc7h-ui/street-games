@@ -4,11 +4,12 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local CashService = require(script.Parent:WaitForChild("CashService"))
 local ProgressionService = require(script.Parent:WaitForChild("ProgressionService"))
+local CityLayoutService = require(script.Parent:WaitForChild("CityLayoutService"))
 
 CashService.Init()
 ProgressionService.Init()
 
-local NPC_COUNT = 12
+local NPC_COUNT = 16
 local ROB_HOLD_TIME = 1.5
 local MIN_CASH = 6
 local MAX_CASH = 32
@@ -16,7 +17,7 @@ local MIN_XP = 3
 local MAX_XP = 7
 local MIN_COOLDOWN = 55
 local MAX_COOLDOWN = 95
-local WANDER_RADIUS = 340
+local WANDER_RADIUS = 260
 
 local random = Random.new()
 
@@ -394,10 +395,16 @@ local function startWandering(model: Model, nodes: {BasePart})
 end
 
 local function spawnNPCs()
-	local nodes = waitForSpawnNodes(15)
-	if #nodes == 0 then
+	local allNodes = waitForSpawnNodes(15)
+	if #allNodes == 0 then
 		warn("[Street Games] No city spawn nodes available for NPC pedestrians.")
 		return
+	end
+
+	local nodes = CityLayoutService.FilterCoreNodes(allNodes)
+	if #nodes == 0 then
+		nodes = allNodes
+		warn("[Street Games] No respawn nodes landed inside detected city core; using fallback nodes.")
 	end
 
 	local count = math.min(NPC_COUNT, #nodes)
@@ -421,7 +428,7 @@ local function spawnNPCs()
 		startWandering(npc, nodes)
 	end
 
-	print(string.format("[Street Games] Spawned %d walking robbery NPCs.", created))
+	print(string.format("[Street Games] Spawned %d walking robbery NPCs inside the city core.", created))
 end
 
 task.spawn(function()
