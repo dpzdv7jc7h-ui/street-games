@@ -73,9 +73,10 @@ player:GetAttributeChangedSignal("Cash"):Connect(updateCash)
 updateCash()
 
 local remotes = ReplicatedStorage:WaitForChild("StreetGamesRemotes")
-local rewardRemote = remotes:WaitForChild("CarRobberyReward")
+local carRewardRemote = remotes:WaitForChild("CarRobberyReward")
+local npcRewardRemote = remotes:WaitForChild("NPCRobberyReward")
 
-rewardRemote.OnClientEvent:Connect(function(cashReward: number, xpReward: number)
+local function showReward(cashReward: number, xpReward: number, sourceText: string)
 	local toast = Instance.new("Frame")
 	toast.Name = "CarRobberyReward"
 	toast.Position = UDim2.fromOffset(16, 134)
@@ -111,7 +112,7 @@ rewardRemote.OnClientEvent:Connect(function(cashReward: number, xpReward: number
 	xp.Size = UDim2.new(1, -22, 0, 16)
 	xp.BackgroundTransparency = 1
 	xp.Font = Enum.Font.GothamBold
-	xp.Text = "+" .. formatNumber(xpReward) .. " XP • CAR ROBBED"
+	xp.Text = "+" .. formatNumber(xpReward) .. " XP • " .. sourceText
 	xp.TextColor3 = Color3.fromRGB(255, 205, 82)
 	xp.TextSize = 9
 	xp.TextXAlignment = Enum.TextXAlignment.Left
@@ -137,6 +138,14 @@ rewardRemote.OnClientEvent:Connect(function(cashReward: number, xpReward: number
 			toast:Destroy()
 		end
 	end)
+end
+
+carRewardRemote.OnClientEvent:Connect(function(cashReward: number, xpReward: number)
+	showReward(cashReward, xpReward, "CAR ROBBED")
 end)
 
-print("[Street Games] Cash and robbery HUD ready.")
+npcRewardRemote.OnClientEvent:Connect(function(cashReward: number, xpReward: number)
+	showReward(cashReward, xpReward, "PEDESTRIAN ROBBED")
+end)
+
+print("[Street Games] Cash, car robbery, and NPC robbery HUD ready.")
